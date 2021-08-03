@@ -1,0 +1,8 @@
+identifier_name:
+ excluded:
+  - i
+
+disabled_rules:
+ - trailing_whitespace
+
+line_length: 400
