@@ -41,7 +41,6 @@ class CharactersListTableViewController: UITableViewController {
         super.viewDidLoad()
         switch status {
         case .downloading:
-            print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
             dataSourse.delegate = self
             dataSourse.download()
         case .downloaded:
@@ -77,6 +76,7 @@ class CharactersListTableViewController: UITableViewController {
             characterDetail.detailData = databaseLogic.detailDataForTableFromDataBase(indexPath: indexPath)
             characterDetail.episodesFromNetwork = databaseLogic.episodeDataForTableFromDataBase(indexPath: indexPath)
             characterDetail.locationData = databaseLogic.locationDataForTableFromDataBase(indexPath: indexPath)
+            characterDetail.title = characterDetail.detailData?.name
             navigationController?.pushViewController(characterDetail, animated: true)
         }
     }
