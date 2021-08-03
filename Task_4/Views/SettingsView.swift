@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @State private var savings = false
+    @AppStorage("saving") private var saving = true
     var body: some View {
-        Toggle("Разрешать сохранять персонажей", isOn: $savings).frame(width: 300)
+        Toggle("Разрешать сохранять персонажей", isOn: $saving).frame(width: 300).onChange(of: saving) { value in
+            if value == false { StorageManager.shared.deleteAllItems()}
+        }
     }
 }
 

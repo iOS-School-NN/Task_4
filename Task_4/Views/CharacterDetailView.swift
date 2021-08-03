@@ -12,10 +12,8 @@ struct CharacterDetailView: View {
     let id: Int
     
     @State var change = false
-    
-    init(id: Int) {
-        self.id = id
-    }
+    @AppStorage("saving") private var saving = true
+    @State private var showAlert = false
     
     var body: some View {
         if viewModel.state.characters[id] != nil && viewModel.state.locationTypes[viewModel.state.characters[id]!.location.name] != nil  {
@@ -53,13 +51,18 @@ struct CharacterDetailView: View {
                 Text(change ? " " : "")
             }.toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: { StorageManager.shared.checkCharacterIsExist(id: id) ? StorageManager.shared.deleteItemById(id: id) : StorageManager.shared.saveCharacter(id: id, viewModel: viewModel)
+                    Button(action: { if saving { StorageManager.shared.checkCharacterIsExist(id: id) ? StorageManager.shared.deleteItemById(id: id) : StorageManager.shared.saveCharacter(id: id, viewModel: viewModel)
                         change.toggle()
-                    }) {
+                    } else {
+                        showAlert = true
+                    }}) {
                         Text( StorageManager.shared.checkCharacterIsExist(id: id) ? "Удалить" : "Загрузить")
                     }
                 }
             }.navigationTitle(viewModel.state.characters[id]!.name)
+            .alert(isPresented: $showAlert) {
+                Alert(title: Text("Важное сообщение"), message: Text("Чтобы загрузить этого персонажа, необходимо дать разрешение в настройках"), dismissButton: .default(Text("Ok")))
+            }
         }
         else {
             ActivityIndicator()

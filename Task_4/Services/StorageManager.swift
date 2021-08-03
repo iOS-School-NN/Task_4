@@ -68,6 +68,21 @@ class StorageManager {
         }
     }
     
+    func deleteAllItems() {
+        withAnimation {
+            let request: NSFetchRequest<CharacterItem> = CharacterItem.fetchRequest()
+            do {
+                let characters = try viewContext.fetch(request)
+                for character in characters {
+                    viewContext.delete(character)
+                }
+                saveContext()
+            } catch let error as NSError {
+                print("Could not delete. \(error), \(error.userInfo)")
+            }
+        }
+    }
+    
     func checkCharacterIsExist(id: Int) -> Bool {
         let request: NSFetchRequest<CharacterItem> = CharacterItem.fetchRequest()
         request.predicate = NSPredicate(format: "id == %d", id)
