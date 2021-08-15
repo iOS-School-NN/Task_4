@@ -16,7 +16,7 @@ final class DetailViewController: UIViewController {
     
     // MARK: - Properties
     
-    private var viewModel = DetailViewModel()
+    private var viewModelDetail = DetailViewModel()
     private var viewModelSettings = SettingsViewModel.shared
     private var dataBaseManager = DataBaseManager.shared
     var character: Character?
@@ -29,7 +29,7 @@ final class DetailViewController: UIViewController {
         configureLoader()
         configureObserver()
         if let id = character?.id {
-            viewModel.fetchData(id: id)
+            viewModelDetail.fetchData(id: id)
         }
     }
     
@@ -80,12 +80,12 @@ final class DetailViewController: UIViewController {
             showAlertController()
             return
         }
-        dataBaseManager.save(character: viewModel.character, episodes: viewModel.episodes, location: viewModel.location)
+        dataBaseManager.save(character: viewModelDetail.character, episodes: viewModelDetail.episodes, location: viewModelDetail.location)
         configureNavBar()
     }
     
     @objc private func removeAction() {
-        guard let characterID = viewModel.character?.id else { return }
+        guard let characterID = viewModelDetail.character?.id else { return }
         dataBaseManager.remove(characterId: characterID)
         configureNavBar()
     }
@@ -101,7 +101,7 @@ final class DetailViewController: UIViewController {
     
     private func configureObserver() {
         showLoader()
-        viewModel.updateHandler = { [weak self] () in
+        viewModelDetail.updateHandler = { [weak self] () in
             DispatchQueue.main.async {
                 self?.tableView.reloadData()
                 self?.hideLoader()
@@ -121,11 +121,11 @@ extension DetailViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return viewModel.character != nil ? 1 : 0
+            return viewModelDetail.character != nil ? 1 : 0
         case 1:
-            return viewModel.location != nil ? 2 : 0
+            return viewModelDetail.location != nil ? 2 : 0
         case 2:
-            return viewModel.episodes.count
+            return viewModelDetail.episodes.count
         default:
             return 0
         }
@@ -136,16 +136,16 @@ extension DetailViewController: UITableViewDataSource {
         switch indexPath.section {
         case 0:
             let cell = CharacterCardTableViewCell.createForTableView(tableView) as! CharacterCardTableViewCell
-            if let character = viewModel.character {
+            if let character = viewModelDetail.character {
                 cell.configure(character: character)
             }
             return cell
         case 1:
-            let location = viewModel.location
+            let location = viewModelDetail.location
             let text = indexPath.row == 0 ? (location?.name ?? "") : (location?.type ?? "")
             return createTableViewCell(title: text)
         case 2:
-            return createTableViewCell(title: viewModel.episodes[indexPath.row].episodeString)
+            return createTableViewCell(title: viewModelDetail.episodes[indexPath.row].episodeString)
         default:
             return UITableViewCell()
         }
@@ -162,14 +162,14 @@ extension DetailViewController {
     }
 }
 
-extension DetailViewController: UITabBarDelegate {
+extension DetailViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         
         switch section {
         case 1:
-            return viewModel.location != nil ? "Location" : nil
+            return viewModelDetail.location != nil ? "Location" : nil
         case 2:
-            return !viewModel.episodes.isEmpty ? "Episode" : nil
+            return !viewModelDetail.episodes.isEmpty ? "Episode" : nil
         default:
             return nil
         }
