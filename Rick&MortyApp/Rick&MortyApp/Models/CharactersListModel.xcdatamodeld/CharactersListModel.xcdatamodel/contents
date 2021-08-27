@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="18154" systemVersion="20G80" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="DSCharacter" representedClassName=".DSCharacter" syncable="YES">
+        <attribute name="gender" attributeType="String"/>
+        <attribute name="identifier" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="imageUrl" attributeType="String"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="species" attributeType="String"/>
+        <attribute name="status" attributeType="String"/>
+        <relationship name="episodes" toMany="YES" deletionRule="Nullify" destinationEntity="DSEpisode" inverseName="character" inverseEntity="DSEpisode"/>
+        <relationship name="location" maxCount="1" deletionRule="Nullify" destinationEntity="DSLocation" inverseName="character" inverseEntity="DSLocation"/>
+    </entity>
+    <entity name="DSEpisode" representedClassName=".DSEpisode" syncable="YES">
+        <attribute name="code" attributeType="String"/>
+        <attribute name="date" attributeType="String"/>
+        <attribute name="identifier" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String"/>
+        <relationship name="character" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DSCharacter" inverseName="episodes" inverseEntity="DSCharacter"/>
+    </entity>
+    <entity name="DSLocation" representedClassName=".DSLocation" syncable="YES">
+        <attribute name="name" attributeType="String"/>
+        <attribute name="type" attributeType="String"/>
+        <relationship name="character" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DSCharacter" inverseName="location" inverseEntity="DSCharacter"/>
+    </entity>
+    <elements>
+        <element name="DSCharacter" positionX="255.8021240234375" positionY="-202.7805480957031" width="128" height="149"/>
+        <element name="DSEpisode" positionX="261" positionY="-135" width="128" height="104"/>
+        <element name="DSLocation" positionX="252" positionY="-144" width="128" height="74"/>
+    </elements>
+</model>
