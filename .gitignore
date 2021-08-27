@@ -43,7 +43,8 @@ Pods/
 UserInterfaceState.xcuserstate/*
 *~
 .DS_Store
-**.xcworkspace/*
+project.xcworkspace/*
+*.xcworkspace/*
 *.xcscheme
 xcschememanagement.plist
 *.xcuserdatad
