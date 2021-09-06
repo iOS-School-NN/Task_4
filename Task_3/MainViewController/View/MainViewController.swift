@@ -62,7 +62,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             return UITableViewCell()
         }
         
-        cell.configure(dataArray[indexPath.row])
+        cell.configure(name: dataArray[indexPath.row].name, imageURL: dataArray[indexPath.row].image)
         return cell
     }
 

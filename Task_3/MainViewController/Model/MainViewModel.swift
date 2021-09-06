@@ -33,13 +33,14 @@ final class MainViewModel {
     }
     
     func loadTheFirstSetOfInformation(urlString: String, id: Int) {
-        NetworkService.performGetRequestForLoadingPages(url: urlString, pageId: id, onComplete: { [weak self] (data, id) in
+        NetworkService.performGetRequestForLoadingPages(url: urlString, pageId: id,
+            onComplete: { [weak self] (data, id) in
                 self?.delegate?.updateTableViewBy(item: data.results)
-            self?.asyncDownloadCharactersInfoByPage(count: data.info.pages, with: MainViewModelConstants.countOfPagesToDownload)
-                
-        }) { (error, id) in
-                NSLog(error.localizedDescription)
-           }
+                self?.asyncDownloadCharactersInfoByPage(count: data.info.pages, with: MainViewModelConstants.countOfPagesToDownload)
+            },
+            onError: { (error, id) in NSLog(error.localizedDescription, id)
+            }
+        )
     }
     
     func asyncDownloadCharactersInfoByPage(count: Int, with pageSize: Int) {
@@ -50,21 +51,24 @@ final class MainViewModel {
             queue.async {
                 semaphore.wait()
                 self.pageId = i
-                NetworkService.performGetRequestForLoadingPages(url: NetworkConstants.urlForLoadingListOfCharacters + "?page=\(i)", pageId: self.pageId, onComplete: { [weak self] (data, id) in
+                NetworkService.performGetRequestForLoadingPages(url: NetworkConstants.urlForLoadingListOfCharacters + "?page=\(i)", pageId: self.pageId,
+                    onComplete: { [weak self] (data, id) in
                         self?.additionalPagesArray = self!.additionalPagesArray + data.results
                         semaphore.signal()
-                    if (i == count) {
-                        self?.delegate?.updateTableViewBy(item: (self!.additionalPagesArray.sorted { $0.id < $1.id }))
-                    }
-                    if (self?.additionalPagesArray.count == MainViewModelConstants.countOfPagesToDownload * MainViewModelConstants.countOfCharactersOnPage) {
-                            self!.delegate?.updateTableViewBy(item: (self!.additionalPagesArray.sorted { $0.id < $1.id }))
-                            self?.additionalPagesArray.removeAll()
-                    }
                         
-                }) { (error, id) in
-                        NSLog(error.localizedDescription)
+                        if (i == count) {
+                            self?.delegate?.updateTableViewBy(item: (self!.additionalPagesArray.sorted { $0.id < $1.id }))
+                        }
+                        if (self?.additionalPagesArray.count == MainViewModelConstants.countOfPagesToDownload * MainViewModelConstants.countOfCharactersOnPage) {
+                                self!.delegate?.updateTableViewBy(item: (self!.additionalPagesArray.sorted { $0.id < $1.id }))
+                                self?.additionalPagesArray.removeAll()
+                        }
+                    },
+                    onError: { (error, id) in
+                        NSLog(error.localizedDescription, id)
                         semaphore.signal()
-                   }
+                    }
+                )
             }
         }
     }

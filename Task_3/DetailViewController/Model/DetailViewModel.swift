@@ -32,48 +32,51 @@ final class DetailViewModel {
     }
     
     func loadCharacterCard(urlString: String) {
-        NetworkService.performGetRequestForLoadingCharacterCard(url: urlString, onComplete: { [weak self] (data) in
-            let checkedData = data
-            self?.characterCard = checkedData
-            self?.queue.async(group: self?.dispatchGroup, qos: .userInitiated) {
-                self?.loadCharacterLocation(urlString: data.location.url)
-            }
-            self?.queue.async(group: self?.dispatchGroup, qos: .userInitiated) {
-                for url in data.episode {
-                    self?.loadCharacterEpisodes(urlString: url)
+        NetworkService.performGetRequestForLoadingCharacterCard(url: urlString,
+            onComplete: { [weak self] (data) in
+                let checkedData = data
+                self?.characterCard = checkedData
+                self?.queue.async(group: self?.dispatchGroup, qos: .userInitiated) {
+                    self?.loadCharacterLocation(urlString: data.location.url)
                 }
-            }
-            
-            self?.dispatchGroup.notify(queue: DispatchQueue.main) {
-                self?.delegate?.updateDetailViewBy(characterCard: (self?.characterCard)!, characterLocation: (self?.characterLocation)!, characterEpisodes: self!.characterEpisodes)
-            }
+                self?.queue.async(group: self?.dispatchGroup, qos: .userInitiated) {
+                    for url in data.episode {
+                        self?.loadCharacterEpisodes(urlString: url)
+                    }
+                }
                 
-        }) { (error) in
-                NSLog(error.localizedDescription)
-           }
+                self?.dispatchGroup.notify(queue: DispatchQueue.main) {
+                    self?.delegate?.updateDetailViewBy(characterCard: (self?.characterCard)!, characterLocation: (self?.characterLocation)!, characterEpisodes: self!.characterEpisodes)
+                }
+            },
+            onError: { (error) in NSLog(error.localizedDescription)
+            }
+        )
     }
     
     func loadCharacterLocation(urlString: String) {
         dispatchGroup.enter()
-        NetworkService.performGetRequestForLoadingCharacterLocation(url: urlString, onComplete: { [weak self] (data) in
-            let checkedData = data
-            self?.characterLocation = checkedData
-            self?.dispatchGroup.leave()
-                
-        }) { (error) in
-                NSLog(error.localizedDescription)
-           }
+        NetworkService.performGetRequestForLoadingCharacterLocation(url: urlString,
+            onComplete: { [weak self] (data) in
+                let checkedData = data
+                self?.characterLocation = checkedData
+                self?.dispatchGroup.leave()
+            },
+            onError: { (error) in NSLog(error.localizedDescription)
+            }
+        )
     }
     
     func loadCharacterEpisodes(urlString: String) {
         dispatchGroup.enter()
-        NetworkService.performGetRequestForLoadingCharacterEpisodes(url: urlString, onComplete: { [weak self] (data) in
-            let checkedData = data
-            self?.characterEpisodes.append(checkedData)
-            self?.dispatchGroup.leave()
-                
-        }) { (error) in
-                NSLog(error.localizedDescription)
-           }
+        NetworkService.performGetRequestForLoadingCharacterEpisodes(url: urlString,
+            onComplete: { [weak self] (data) in
+                let checkedData = data
+                self?.characterEpisodes.append(checkedData)
+                self?.dispatchGroup.leave()
+            },
+            onError: { (error) in NSLog(error.localizedDescription)
+            }
+        )
     }
 }

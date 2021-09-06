@@ -214,24 +214,38 @@
                     </tabBar>
                     <connections>
                         <segue destination="AHF-LY-dUT" kind="relationship" relationship="viewControllers" id="Snd-vG-ZH3"/>
-                        <segue destination="sOk-cq-gok" kind="relationship" relationship="viewControllers" id="ZSC-ju-bx2"/>
+                        <segue destination="1Bt-Xb-OlN" kind="relationship" relationship="viewControllers" id="ZSC-ju-bx2"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="L8T-Rs-Esl" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1202" y="471"/>
         </scene>
-        <!--View Controller-->
+        <!--Download View Controller-->
         <scene sceneID="9PS-mW-L7t">
             <objects>
-                <viewController id="sOk-cq-gok" sceneMemberID="viewController">
+                <viewController id="sOk-cq-gok" customClass="DownloadViewController" customModule="Task_3" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ec2-fD-vlL">
                         <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="lz9-mT-Atx">
-                                <rect key="frame" x="0.0" y="44" width="390" height="717"/>
+                                <rect key="frame" x="0.0" y="88" width="390" height="673"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="downloadedСharacterCell" id="Q71-GS-gmG">
+                                        <rect key="frame" x="0.0" y="24.333333969116211" width="390" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Q71-GS-gmG" id="noz-oC-yvb">
+                                            <rect key="frame" x="0.0" y="0.0" width="390" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="sOk-cq-gok" id="xiT-Ig-Z3a"/>
+                                    <outlet property="delegate" destination="sOk-cq-gok" id="KP1-EF-8eM"/>
+                                </connections>
                             </tableView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="tt7-fX-hw0"/>
@@ -243,11 +257,33 @@
                             <constraint firstItem="lz9-mT-Atx" firstAttribute="top" secondItem="tt7-fX-hw0" secondAttribute="top" id="YRN-bf-NaI"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" systemItem="downloads" id="exJ-bG-A1Y"/>
+                    <navigationItem key="navigationItem" id="3Kt-XN-1vO"/>
+                    <connections>
+                        <outlet property="downloadTableView" destination="lz9-mT-Atx" id="zgD-b4-FIC"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="u6G-8p-nBy" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-123" y="741"/>
+            <point key="canvasLocation" x="806.15384615384608" y="740.75829383886253"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="rOb-Gn-ERf">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="1Bt-Xb-OlN" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" systemItem="downloads" id="exJ-bG-A1Y"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="vvr-qD-XDi">
+                        <rect key="frame" x="0.0" y="44" width="390" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="sOk-cq-gok" kind="relationship" relationship="rootViewController" id="e5m-yC-iPB"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="AGl-1D-RYk" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-123.07692307692307" y="740.75829383886253"/>
         </scene>
     </scenes>
     <resources>

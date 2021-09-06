@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="18154" systemVersion="20G80" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="CharacterObject" representedClassName="CharacterObject" syncable="YES">
+        <attribute name="gender" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="image" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="species" optional="YES" attributeType="String"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <relationship name="episode" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="EpisodeObject" inverseName="character" inverseEntity="EpisodeObject"/>
+        <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="LocationObject" inverseName="character" inverseEntity="LocationObject"/>
+    </entity>
+    <entity name="EpisodeObject" representedClassName="EpisodeObject" syncable="YES">
+        <attribute name="airDate" optional="YES" attributeType="String"/>
+        <attribute name="episode" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="character" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CharacterObject" inverseName="episode" inverseEntity="CharacterObject"/>
+    </entity>
+    <entity name="LocationObject" representedClassName="LocationObject" syncable="YES">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <relationship name="character" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CharacterObject" inverseName="location" inverseEntity="CharacterObject"/>
+    </entity>
+    <elements>
+        <element name="CharacterObject" positionX="-63" positionY="-18" width="128" height="164"/>
+        <element name="EpisodeObject" positionX="-54" positionY="-9" width="128" height="89"/>
+        <element name="LocationObject" positionX="-36" positionY="9" width="128" height="74"/>
+    </elements>
+</model>

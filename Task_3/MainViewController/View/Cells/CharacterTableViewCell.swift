@@ -23,10 +23,10 @@ class CharacterTableViewCell: UITableViewCell {
         characterImageView.layer.cornerRadius = characterImageView.frame.width / 2 
     }
     
-    func configure(_ item: Result) {
-        characterNameLabel.text = item.name
-        characterImageView.loadImageWithCache(by: item.image, onComplete: { [weak self] (data, url) in
-            if(item.image == url) {
+    func configure(name: String, imageURL: String) {
+        characterNameLabel.text = name
+        characterImageView.loadImageWithCache(by: imageURL, onComplete: { [weak self] (data, url) in
+            if(imageURL == url) {
                 self?.characterImageView.image = UIImage(data: data)
             }
         })

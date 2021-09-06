@@ -7,7 +7,7 @@
 
 import UIKit
 
-class DetailViewController: UIViewController, MainViewControllerDelegate, DetailViewModelDelegate {
+class DetailViewController: UIViewController, MainViewControllerDelegate, DownloadViewControllerDelegate, DetailViewModelDelegate {
     
     @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
     
@@ -25,19 +25,66 @@ class DetailViewController: UIViewController, MainViewControllerDelegate, Detail
     @IBOutlet private weak var detailEpisodesTitleLabel: UILabel!
     @IBOutlet private weak var detailDescriptionOfEpisodesTextView: UITextView!
     
-    var detailViewModel: DetailViewModel?
-    var characterCardData: Result?
+    private var detailViewModel: DetailViewModel?
+    private var characterCard: CharacterCardModel?
+    private var characterLocation: CharacterLocationModel?
+    private var characterEpisodes: [CharactersEpisodesModel]?
+    private var downloadedItem: CharacterObject? = nil
+    private var characterId: Int = -1
+    private let characterDataManager = CoreDataManager.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.title = "Loading..."
-        preLoading()
+        if downloadedItem != nil {
+            updateAttributesByDownloadedItem()
+        } else {
+            self.navigationItem.title = "Loading..."
+            preLoading()
+        }
     }
     
     func initCharacterCard(_ id: Int) {
         self.detailViewModel = DetailViewModel(characterId: id)
         self.detailViewModel?.delegate = self
         self.detailViewModel?.loadDetailInformation()
+    }
+    
+    func updateDownloadedItem(_ item: CharacterObject) {
+        self.downloadedItem = item
+    }
+    
+    private func updateAttributesByDownloadedItem() {
+        guard let downloadedItem = self.downloadedItem else {
+            return
+        }
+        self.characterId = Int(downloadedItem.id)
+        activityIndicator.isHidden = true
+        
+        self.navigationItem.title = downloadedItem.name
+        detailCharacterNameLabel.text = "Name: " + (downloadedItem.name ?? "")
+        detailCharacterGenderLabel.text = "Gender: " + (downloadedItem.gender ?? "")
+        detailCharacterStatusLabel.text = "Status: " + (downloadedItem.status ?? "")
+        detailCharacterTypeLabel.text = "Type: " + (downloadedItem.type ?? "")
+        
+        detailLocationTitleLabel.text = "Location: "
+        detailCharacterLocationNameLabel.text = "Name: " + (downloadedItem.location?.name ?? "")
+        detailCharacterLocationTypeLabel.text = "Type: " + (downloadedItem.location?.type ?? "")
+        
+        detailEpisodesTitleLabel.text = "Episodes: "
+        detailDescriptionOfEpisodesTextView.isSelectable = false
+        
+        guard let characterEpisodes = downloadedItem.episode?.allObjects as? [EpisodeObject] else { return }
+        var string = ""
+        for i in 0..<characterEpisodes.count {
+            string += "• " + (characterEpisodes[i].episode ?? "") + "/"
+            string += (characterEpisodes[i].name ?? "") + "/"
+            string += (characterEpisodes[i].airDate ?? "") + "\n"
+        }
+
+        let attributedString = NSMutableAttributedString(string: string)
+        detailDescriptionOfEpisodesTextView.attributedText = attributedString
+
+        updateUIBarItem()
     }
     
     private func preLoading() {
@@ -59,6 +106,12 @@ class DetailViewController: UIViewController, MainViewControllerDelegate, Detail
     }
     
     func updateDetailViewBy(characterCard: CharacterCardModel, characterLocation: CharacterLocationModel, characterEpisodes: [CharactersEpisodesModel]) {
+        
+        self.characterCard = characterCard
+        self.characterLocation = characterLocation
+        self.characterEpisodes = characterEpisodes
+        
+        self.characterId = characterCard.id
         detailCharacterImageView.loadImageWithoutCache(by: characterCard.image)
         self.navigationItem.title = characterCard.name
         detailCharacterNameLabel.text = "Name: " + characterCard.name
@@ -83,5 +136,31 @@ class DetailViewController: UIViewController, MainViewControllerDelegate, Detail
         
         activityIndicator.stopAnimating()
         activityIndicator.isHidden = true
+        
+        updateUIBarItem()
+        
     }
+    private func updateUIBarItem() {
+        if (CoreDataManager.shared.findCharacterObjectBy(id: (self.characterId))) == nil {
+            if self.downloadedItem == nil {
+                navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Download", style: .plain, target: self, action: #selector(downloadButtonTapped))
+            } else {
+                navigationItem.rightBarButtonItem?.isEnabled = false
+            }
+        } else {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Remove", style: .plain, target: self, action: #selector(removeButtonTapped))
+        }
+    }
+    
+    @objc private func downloadButtonTapped() {
+        guard let characterEpisodes = self.characterEpisodes else { return }
+        CoreDataManager.shared.downloadObject(character: self.characterCard, location: self.characterLocation, episodes: characterEpisodes)
+        updateUIBarItem()
+    }
+    
+    @objc private func removeButtonTapped() {
+        CoreDataManager.shared.deleteObjectBy(characterUid: self.characterId)
+        updateUIBarItem()
+    }
+
 }
