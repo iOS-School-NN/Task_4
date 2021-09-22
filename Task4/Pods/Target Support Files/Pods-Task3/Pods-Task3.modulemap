@@ -1,0 +1,6 @@
+framework module Pods_Task3 {
+  umbrella header "Pods-Task3-umbrella.h"
+
+  export *
+  module * { export * }
+}
